@@ -11,7 +11,7 @@ Nettsiden for Opptenningspakken. Fronten er en statisk side (HTML, CSS og litt J
 | `assets/logo/` | Fire logoforslag (A–D) som SVG, ikoner og favicon |
 | `assets/illu/` | Håndtegnede illustrasjoner |
 | `assets/img/` | Bildene dine, optimalisert som WebP |
-| `assets/fonts/` | DM Sans og DM Serif Display (SIL Open Font License), lagret lokalt så siden ikke henter noe fra Google |
+| `assets/fonts/` | DM Sans, DM Serif Display og Patrick Hand (SIL Open Font License) som komprimerte WOFF2-filer, lagret lokalt så siden ikke henter noe fra Google |
 | `shopify/kjop.liquid` | Koden du limer inn i en Custom Liquid-seksjon i Shopify |
 
 ## Se siden lokalt
