@@ -1,0 +1,132 @@
+{%- comment -%}
+  OPPTENNINGSPAKKEN – KJØPSSIDE (Custom Liquid)
+
+  Slik bruker du den:
+  1. Opprett produktet «Opptenningspakken» i Shopify med handle «opptenningspakken»
+     og én valgfri variantopsjon («Størrelse») med tre varianter: 5-pakk, 10-pakk og 20-pakk.
+     Variantnavnene MÅ starte med antallet, f.eks. «5-pakk», for at pris per pakke skal regnes ut.
+  2. Opprett en side i Shopify (Nettbutikk → Sider) med adressen /pages/kjop.
+  3. I temaredigereren: legg til en «Custom Liquid»-seksjon på siden og lim inn ALT under denne kommentaren.
+  4. Bytt ut adressen på linjen merket «HJEM» med adressen til GitHub Pages-siden din.
+
+  Kjøpsknappene på nettsiden sender kunden hit med ?pakke=5, ?pakke=10 eller ?pakke=20,
+  og riktig pakke blir forhåndsvalgt.
+{%- endcomment -%}
+
+{%- assign op_home = 'https://DITT-BRUKERNAVN.github.io/opptenningspakken/' -%} {%- comment -%} HJEM {%- endcomment -%}
+{%- assign op_product = all_products['opptenningspakken'] -%}
+
+<div class="op-buy" id="op-buy">
+<style>
+  .op-buy{--op-bg:#f8f5ee;--op-ink:#4a3425;--op-soft:#7a6454;--op-red:#d86a7e;--op-red-d:#b94c62;--op-tan:#ead9b8;--op-line:#3b2a1f;
+    max-width:760px;margin:0 auto;padding:clamp(28px,5vw,56px) 20px;color:var(--op-ink);background:var(--op-bg);font-size:17px;line-height:1.6}
+  .op-buy *{box-sizing:border-box}
+  .op-buy h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(2rem,6vw,3rem);line-height:1.1;margin:0 0 10px}
+  .op-buy .op-lead{color:var(--op-soft);margin:0 0 28px}
+  .op-buy .op-back{display:inline-block;margin-bottom:22px;color:var(--op-ink);font-weight:600;text-decoration:none;border-bottom:2px solid var(--op-red)}
+  .op-buy fieldset{border:0;margin:0 0 22px;padding:0}
+  .op-buy legend{font-weight:700;margin-bottom:12px;padding:0}
+  .op-buy .op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .op-buy .op-card{position:relative;display:flex;flex-direction:column;gap:2px;padding:18px 16px;background:#fffdf8;border:2px solid var(--op-line);border-radius:26px 32px 28px 34px/32px 26px 34px 28px;box-shadow:5px 5px 0 var(--op-tan);cursor:pointer;transition:transform .15s,box-shadow .15s}
+  .op-buy .op-card:hover{transform:translate(-1px,-1px)}
+  .op-buy .op-card input{position:absolute;opacity:0;inset:0;cursor:pointer}
+  .op-buy .op-card:has(input:checked){box-shadow:5px 5px 0 var(--op-red);background:#fff}
+  .op-buy .op-card:has(input:focus-visible){outline:3px solid var(--op-red);outline-offset:3px}
+  .op-buy .op-card.is-soldout{opacity:.5;cursor:not-allowed}
+  .op-buy .op-n{font-family:"DM Serif Display",Georgia,serif;font-size:2.8rem;line-height:1;color:var(--op-red-d)}
+  .op-buy .op-t{font-weight:700}
+  .op-buy .op-price{font-family:"DM Serif Display",Georgia,serif;font-size:1.6rem;margin-top:8px}
+  .op-buy .op-per{color:var(--op-soft);font-size:.9rem}
+  .op-buy .op-btn{display:block;width:100%;margin-top:6px;padding:.95em 1.4em;background:var(--op-red-d);color:#fff;font:inherit;font-weight:700;border:2px solid var(--op-line);border-radius:999px 880px 999px 900px/900px 999px 880px 999px;box-shadow:4px 4px 0 var(--op-line);cursor:pointer}
+  .op-buy .op-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--op-line)}
+  .op-buy .op-btn[disabled]{opacity:.6;cursor:wait}
+  .op-buy .op-info{list-style:none;margin:30px 0 0;padding:20px 22px;background:#f1eadb;border-radius:22px;display:grid;gap:10px}
+  .op-buy .op-info li::before{content:"";display:inline-block;width:.55em;height:.55em;background:var(--op-red);border-radius:50% 40% 55% 45%;margin-right:.6em}
+  .op-buy .op-warn{padding:16px;border:2px dashed var(--op-red-d);border-radius:16px}
+  .op-buy .op-note{font-size:.88rem;color:var(--op-soft);margin-top:18px}
+  @media(max-width:620px){.op-buy .op-grid{grid-template-columns:1fr}}
+</style>
+
+<a class="op-back" href="{{ op_home }}">← Tilbake til Opptenningspakken</a>
+<h1>Velg pakke</h1>
+<p class="op-lead">Håndlaget opptenning i naturmaterialer. Prisene er inkludert mva.</p>
+
+{%- if op_product.id == blank -%}
+  <p class="op-warn">Produktet «opptenningspakken» finnes ikke ennå. Opprett det i Shopify med handle <strong>opptenningspakken</strong> og tre varianter (5-pakk, 10-pakk, 20-pakk).</p>
+{%- else -%}
+  {%- form 'product', op_product, id: 'op-form' -%}
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="return_to" value="/cart">
+    <fieldset>
+      <legend>Hvor mange pakker trenger du?</legend>
+      <div class="op-grid">
+        {%- for variant in op_product.variants -%}
+          {%- assign op_n = variant.title | split: '-' | first | plus: 0 -%}
+          <label class="op-card{% unless variant.available %} is-soldout{% endunless %}">
+            <input type="radio" name="id" value="{{ variant.id }}" data-n="{{ op_n }}"{% if forloop.first %} checked{% endif %}{% unless variant.available %} disabled{% endunless %}>
+            <span class="op-n">{{ op_n }}</span>
+            <span class="op-t">pakker{% unless variant.available %} (utsolgt){% endunless %}</span>
+            <span class="op-price">{{ variant.price | money_without_trailing_zeros }}</span>
+            {%- if op_n > 0 -%}
+              <span class="op-per">{{ variant.price | divided_by: op_n | money_without_trailing_zeros }} per pakke</span>
+            {%- endif -%}
+          </label>
+        {%- endfor -%}
+      </div>
+    </fieldset>
+    <button type="submit" class="op-btn" id="op-submit">Gå til kassen</button>
+  {%- endform -%}
+{%- endif -%}
+
+<ul class="op-info">
+  <li><strong>Sendes første søndag hver måned.</strong> Neste utsendelse: <span data-op-next>første søndag i måneden</span>.</li>
+  <li><strong>Frakt 199 kr</strong> til hele landet.</li>
+  <li><strong>Gratis henting</strong> i Sandefjord og Oslo. Velg henting i kassen.</li>
+</ul>
+<p class="op-note">Bruk pakken bare i godkjent ovn, peis eller bålplass, og følg alltid produsentens anvisninger.</p>
+
+<script>
+(function () {
+  var root = document.getElementById('op-buy');
+  if (!root) return;
+
+  // Forhåndsvelg pakke fra ?pakke=5|10|20
+  try {
+    var q = new URLSearchParams(window.location.search).get('pakke');
+    if (q) {
+      var r = root.querySelector('input[name="id"][data-n="' + String(q).replace(/[^0-9]/g, '') + '"]');
+      if (r && !r.disabled) r.checked = true;
+    }
+  } catch (e) {}
+
+  // Neste utsendelse = første søndag i måneden
+  function firstSunday(y, m) { var d = new Date(y, m, 1); return new Date(y, m, 1 + ((7 - d.getDay()) % 7)); }
+  var now = new Date(), y = now.getFullYear(), m = now.getMonth();
+  var today = new Date(y, m, now.getDate()), d = firstSunday(y, m);
+  if (d <= today) { m++; if (m > 11) { m = 0; y++; } d = firstSunday(y, m); }
+  var el = root.querySelector('[data-op-next]');
+  if (el) el.textContent = d.toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Legg i handlekurv og gå rett til kassen. Faller tilbake til vanlig skjema-innsending.
+  var form = root.querySelector('form');
+  var btn = document.getElementById('op-submit');
+  if (!form || !btn) return;
+  form.addEventListener('submit', function (e) {
+    var chosen = form.querySelector('input[name="id"]:checked');
+    if (!chosen) return;
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = 'Legger i handlekurven …';
+    var base = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+    fetch(base + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ items: [{ id: Number(chosen.value), quantity: 1 }] })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('cart');
+      window.location.href = base + 'checkout';
+    }).catch(function () { form.submit(); });
+  });
+})();
+</script>
+</div>
